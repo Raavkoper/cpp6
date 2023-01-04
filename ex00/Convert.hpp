@@ -10,10 +10,10 @@ private:
 	std::string data;
 	std::string type;
 
-	char char_lit;
-	int int_lit;
-	float float_lit;
-	double double_lit;
+	std::string char_lit;
+	std::string int_lit;
+	std::string float_lit;
+	std::string double_lit;
  
 public: 
 	Convert(); 
@@ -24,6 +24,7 @@ public:
 
 	void setData(char *argv);
 	void detectType();
+	void fillTypes();
 	std::string getData();
 	std::string getType();
 }; 

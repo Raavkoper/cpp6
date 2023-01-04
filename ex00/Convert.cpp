@@ -68,3 +68,15 @@ void Convert::detectType() {
 	else
 		type = "double";
 }
+
+void Convert::fillTypes() {
+	if (type == "string") {
+		char_lit = "Impossible";
+		int_lit = "Impossible";
+		float_lit = "Impossible";
+		double_lit = "Impossible";
+	}
+	if (type == "char") {
+		
+	}
+}

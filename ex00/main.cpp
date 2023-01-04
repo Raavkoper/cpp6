@@ -8,6 +8,7 @@ int main(int argc, char **argv) {
 	Convert convert(argv[1]);
 
 	convert.detectType();
+	convert.fillTypes();
 
 	std::cout << "type: " << convert.getType() << std::endl;
 	// std::cout << "Char: " << convert.toChar() << std::endl;
