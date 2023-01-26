@@ -1,7 +1,7 @@
 #include "Convert.hpp"
 
 Convert::Convert()
-	: data(0)
+	: data("unset")
 {}
  
 Convert::Convert( const Convert& other) {
@@ -40,11 +40,30 @@ const char *Convert::TooManyDotsException::what() const throw() {
 	return ("Convert: there are too many dots in that number");
 }
 
+int Convert::checkEdges() {
+	if (data == "-inff" || data == "+inff" || data == "nanf") {
+		type = "float";
+		return (1);
+	}
+	if (data == "-inf" || data == "+inf" || data == "nan") {
+		type = "double";
+		return (1);
+	}
+	return (0);
+}
+
+int Convert::isDumb() {
+	return (data == "-inf" || data == "+inf" || data == "nan" ||
+		data == "-inff" || data == "+inff" || data == "nanf");
+}
+
 void Convert::detectType() {
 	int length = data.length();
 	int is_dot = 0;
+	if (checkEdges())
+		return ;
 	for (int i = 0; i < length; i++) {
-		if (!isdigit(data[i]) && data[i] != '.' && i != length && data[i] != 'f') {
+		if (!isdigit(data[i]) && data[i] != '.' && data[i] != '-' && i != length && data[i] != 'f') {
 			if (length == 1) {
 				type = "char";
 			}
@@ -76,12 +95,48 @@ void Convert::fillTypes() {
 		float_lit = static_cast<float>(data[0]);
 		double_lit = static_cast<double>(data[0]);
 	}
+	if (type == "int") {
+		int_lit = std::stoi(data);
+		char_lit = int_lit;
+		float_lit = static_cast<float>(int_lit);
+		double_lit = static_cast<double>(int_lit);
+	}
+	if (type == "float") {
+		float_lit = std::stof(data);
+		char_lit = static_cast<char>(float_lit);
+		int_lit = static_cast<int>(float_lit);
+		double_lit = static_cast<double>(float_lit);
+	}
+	if (type == "double") {
+		double_lit = std::stod(data);
+		char_lit = static_cast<char>(double_lit);
+		int_lit = static_cast<int>(double_lit);
+		float_lit = static_cast<double>(double_lit);
+	}
 }
 
 void Convert::print() {
-	std::cout << "type: " << type << std::endl;
-	std::cout << "Char: " << char_lit << std::endl;
-	std::cout << "Int: " << int_lit << std::endl;
-	std::cout << "Float: " << float_lit << std::endl;
-	std::cout << "Double: " << double_lit << std::endl;
+	std::cout << "Type: " << type << std::endl;
+	std::cout << "Char: ";
+	if (int_lit <= 127 && int_lit >= 0) {
+		if (isprint(char_lit))
+			std::cout << char_lit << std::endl;
+		else
+			std::cout << "Non displayable" << std::endl;
+	}
+	else
+		std::cout << "Impossible" << std::endl;
+	std::cout << "Int: ";
+	if (isDumb())
+		std::cout << "Impossible" << std::endl;
+	else
+		std::cout << int_lit << std::endl;
+	std::cout << "Float: " << float_lit;
+	if (type == "int" || type == "char" || (!modf(float_lit, &float_lit) && !isDumb()))
+		std::cout << ".0";
+	std::cout << "f" << std::endl;
+	std::cout << "Double: " << double_lit;
+	if (type == "int" || type == "char" || (!modf(double_lit, &double_lit) && !isDumb()))
+		std::cout << ".0";
+	std::cout << std::endl;
 }

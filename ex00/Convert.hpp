@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
+#include <cmath>
  
 class Convert {
 private: 
@@ -31,6 +31,8 @@ public:
 	};
 
 	void setData(char *argv);
+	int checkEdges();
+	int isDumb();
 	void detectType();
 	void fillTypes();
 	void print();
