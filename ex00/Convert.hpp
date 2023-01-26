@@ -10,10 +10,10 @@ private:
 	std::string data;
 	std::string type;
 
-	std::string char_lit;
-	std::string int_lit;
-	std::string float_lit;
-	std::string double_lit;
+	char char_lit;
+	int int_lit;
+	float float_lit;
+	double double_lit;
  
 public: 
 	Convert(); 
@@ -22,9 +22,18 @@ public:
 	~Convert(); 
 	Convert& operator=( const Convert &other); 
 
+	class TypeIsStringException : public std::exception {
+		const char *what() const throw();
+	};
+
+	class TooManyDotsException : public std::exception {
+		const char *what() const throw();
+	};
+
 	void setData(char *argv);
 	void detectType();
 	void fillTypes();
+	void print();
 	std::string getData();
 	std::string getType();
 }; 

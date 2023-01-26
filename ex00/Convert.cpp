@@ -2,25 +2,17 @@
 
 Convert::Convert()
 	: data(0)
-{
-
-}
+{}
  
 Convert::Convert( const Convert& other) {
 	data = other.data;
-
-	*this = other;
 }
  
 Convert::Convert(std::string newData) 
 	: data(newData)
-{
+{}
 
-}
-
-Convert::~Convert() {
-
-}
+Convert::~Convert() {}
 
 Convert& Convert::operator=( const Convert& other ) {
 	data = other.data;
@@ -40,6 +32,14 @@ std::string Convert::getType() {
 	return (type);
 }
 
+const char *Convert::TypeIsStringException::what() const throw() {
+	return ("Convert: data type cant be a string dude");
+}
+
+const char *Convert::TooManyDotsException::what() const throw() {
+	return ("Convert: there are too many dots in that number");
+}
+
 void Convert::detectType() {
 	int length = data.length();
 	int is_dot = 0;
@@ -49,14 +49,14 @@ void Convert::detectType() {
 				type = "char";
 			}
 			else
-				type = "string";
+				throw TypeIsStringException();
 			return ;
 		}
 		if (data[i] == '.') {
 			if (!is_dot)
 				is_dot++;
 			else {
-				type = "invalid";
+				throw TooManyDotsException();
 				return ;
 			}
 		}
@@ -70,13 +70,18 @@ void Convert::detectType() {
 }
 
 void Convert::fillTypes() {
-	if (type == "string") {
-		char_lit = "Impossible";
-		int_lit = "Impossible";
-		float_lit = "Impossible";
-		double_lit = "Impossible";
-	}
 	if (type == "char") {
-		
+		char_lit = data[0];
+		int_lit = data[0];
+		float_lit = static_cast<float>(data[0]);
+		double_lit = static_cast<double>(data[0]);
 	}
+}
+
+void Convert::print() {
+	std::cout << "type: " << type << std::endl;
+	std::cout << "Char: " << char_lit << std::endl;
+	std::cout << "Int: " << int_lit << std::endl;
+	std::cout << "Float: " << float_lit << std::endl;
+	std::cout << "Double: " << double_lit << std::endl;
 }
