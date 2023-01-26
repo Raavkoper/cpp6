@@ -30,8 +30,13 @@ public:
 		const char *what() const throw();
 	};
 
+	class WrongFException : public std::exception {
+		const char *what() const throw();
+	};
+
 	void setData(char *argv);
 	int checkEdges();
+	int fChecks();
 	int isDumb();
 	void detectType();
 	void fillTypes();

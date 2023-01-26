@@ -37,7 +37,11 @@ const char *Convert::TypeIsStringException::what() const throw() {
 }
 
 const char *Convert::TooManyDotsException::what() const throw() {
-	return ("Convert: there are too many dots in that number");
+	return ("Convert: get your dot game up this doesnt work");
+}
+
+const char *Convert::WrongFException::what() const throw() {
+	return ("Convert: cant put f's there buddy");
 }
 
 int Convert::checkEdges() {
@@ -52,6 +56,29 @@ int Convert::checkEdges() {
 	return (0);
 }
 
+int Convert::fChecks() {
+	int length = data.length();
+	int f_count = 0;
+	if (length == 1 && data[0] == 'f') {
+		type = "char";
+		return (1);
+	}
+	if (length == 2 && data[0] == '.' && data[1] == 'f')
+		throw TooManyDotsException();
+	if (length == 1 && data[0] == '.') {
+		type = "char";
+		return (1);
+	}
+	for (int i = 0; i < length; i++) {
+		if (data[i] == 'f') {
+			f_count++;
+			if (i != length - 1)
+				throw WrongFException();
+		}
+	}
+	return (0);
+}
+
 int Convert::isDumb() {
 	return (data == "-inf" || data == "+inf" || data == "nan" ||
 		data == "-inff" || data == "+inff" || data == "nanf");
@@ -61,6 +88,8 @@ void Convert::detectType() {
 	int length = data.length();
 	int is_dot = 0;
 	if (checkEdges())
+		return ;
+	if (fChecks())
 		return ;
 	for (int i = 0; i < length; i++) {
 		if (!isdigit(data[i]) && data[i] != '.' && data[i] != '-' && i != length && data[i] != 'f') {
@@ -74,10 +103,8 @@ void Convert::detectType() {
 		if (data[i] == '.') {
 			if (!is_dot)
 				is_dot++;
-			else {
+			else
 				throw TooManyDotsException();
-				return ;
-			}
 		}
 	}
 	if (!is_dot)
@@ -96,7 +123,12 @@ void Convert::fillTypes() {
 		double_lit = static_cast<double>(data[0]);
 	}
 	if (type == "int") {
-		int_lit = std::stoi(data);
+		try {
+			if (std::stoll(data) > 2147483647 || std::stoll(data) < -2147483648)
+				int_lit = 0;
+			else
+				int_lit = std::stoi(data);
+		} catch (std::exception &e) {}
 		char_lit = int_lit;
 		float_lit = static_cast<float>(int_lit);
 		double_lit = static_cast<double>(int_lit);
@@ -116,6 +148,7 @@ void Convert::fillTypes() {
 }
 
 void Convert::print() {
+	int i = 0;
 	std::cout << "Type: " << type << std::endl;
 	std::cout << "Char: ";
 	if (int_lit <= 127 && int_lit >= 0) {
@@ -127,9 +160,20 @@ void Convert::print() {
 	else
 		std::cout << "Impossible" << std::endl;
 	std::cout << "Int: ";
-	if (isDumb())
+	try {
+		if (std::stoll(data) > 2147483647 || std::stoll(data) < -2147483648) {
+			std::cout << "Impossible" << std::endl;
+			i++;
+		}
+	} catch(std::exception &e) {
 		std::cout << "Impossible" << std::endl;
-	else
+		i++;
+	}
+	if (isDumb() && !i) {
+		std::cout << "Impossible" << std::endl;
+		i++;
+	}
+	else if (!i)
 		std::cout << int_lit << std::endl;
 	std::cout << "Float: " << float_lit;
 	if (type == "int" || type == "char" || (!modf(float_lit, &float_lit) && !isDumb()))
