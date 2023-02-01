@@ -63,6 +63,8 @@ int Convert::fChecks() {
 		type = "char";
 		return (1);
 	}
+	if (data == ".-" || data == "-.")
+		throw TooManyDotsException();
 	if (length == 2 && data[0] == '.' && data[1] == 'f')
 		throw TooManyDotsException();
 	if (length == 1 && data[0] == '.') {
