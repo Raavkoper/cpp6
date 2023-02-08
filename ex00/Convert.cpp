@@ -63,7 +63,7 @@ int Convert::fChecks() {
 		type = "char";
 		return (1);
 	}
-	if (data == ".-" || data == "-.")
+	if (data == ".-" || data == "-." || data == "-.f")
 		throw TooManyDotsException();
 	if (length == 2 && data[0] == '.' && data[1] == 'f')
 		throw TooManyDotsException();
@@ -163,7 +163,11 @@ void Convert::print() {
 		std::cout << "Impossible" << std::endl;
 	std::cout << "Int: ";
 	try {
-		if (std::stoll(data) > 2147483647 || std::stoll(data) < -2147483648) {
+		if (type == "char") {
+			std::cout << int_lit << std::endl;
+			i++;
+		}
+		else if (std::stoll(data) > 2147483647 || std::stoll(data) < -2147483648) {
 			std::cout << "Impossible" << std::endl;
 			i++;
 		}
