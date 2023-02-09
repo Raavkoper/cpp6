@@ -9,7 +9,6 @@ int main(void) {
     std::cout << &data << std::endl;
     std::cout << std::endl;
 
-    intptr = serialize(data);
     data = NULL;
     data = deserialize(intptr);
 
